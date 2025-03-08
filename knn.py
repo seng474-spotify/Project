@@ -39,6 +39,6 @@ def main():
     print("Dataset split into feature matrix and target/label vector.")
     
     print("\nFinished execution of knn.py.")
-    
+
 if __name__ == "__main__":
     main()
