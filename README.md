@@ -12,7 +12,7 @@ Before running this code:
 - Run: pip install matplotlib
 - Run: pip install numpy
 - Run: pip install pandas
-- Run the program.
+- Close all project-related files
 
 KNN.py can be run by:
 - Opening CMD
