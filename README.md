@@ -9,6 +9,9 @@ Here is a link to download full spotify dataset
 Before running this code:
 - Open CMD
 - Run: pip install kagglehub
+- Run: pip install matplotlib
+- Run: pip install numpy
+- Run: pip install pandas
 - Run the program.
 
 KNN.py can be run by:
