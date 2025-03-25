@@ -20,7 +20,9 @@ tuneNeighboursSwitch = 0 #n_neighbors
 tuneWeightsSwitch = 0 #weights
 tuneAlgorithmSwitch = 0 #algorithm - leaf-size just affects the speed at which the construction takes place.
 tuneDissimilarityMeasureSwitch = 0 #metric (dissimilarity measure) - p affects Minkowski only...
-tunedKNNSwitch = 1 #Using tuned hyperparameters
+tunedKNNSwitch = 0 #Using tuned hyperparameters
+
+testSwitch = 1
 
 #Ideal Hyperparameter Values (calculated from experiments)
 idealNeighbors = 40 
@@ -62,7 +64,80 @@ def main():
     if tunedKNNSwitch == 1:
         tunedKNNExperiment(data)
 
+    if testSwitch == 1:
+
+        #Filter to include only the 8 highest occurring genres - classification granularity metric 
+        topEightGenres = data["genre"].value_counts().index[:8] #black-metal, gospel, ambient, acoustic, alt-rock, emo, indian, k-pop
+        data = data[data["genre"].isin(topEightGenres)]
+        print("Reduced dataset to only include highest 8 occurring genres.")
+
+        blackMetalData = data[data["genre"].isin(["black-metal"])]
+        gospelData = data[data["genre"].isin(["gospel"])]
+        ambientData = data[data["genre"].isin(["ambient"])]
+        acousticData = data[data["genre"].isin(["acoustic"])]
+        altRockData = data[data["genre"].isin(["alt-rock"])]
+        emoData = data[data["genre"].isin(["emo"])]
+        indianData = data[data["genre"].isin(["indian"])]
+        KPopData = data[data["genre"].isin(["k-pop"])]
+        print("Separated dataset into instances of each label in top 8 genres.")
+
+        if debug == 1:
+            print(blackMetalData)
+            print(gospelData)
+            print(ambientData)
+            print(acousticData)
+            print(altRockData)
+            print(emoData)
+            print(indianData)
+            print(KPopData)
+
+        blackMetalCenter = calculateClusterCenter(blackMetalData)
+        gospelCenter = calculateClusterCenter(gospelData)
+        ambientCenter = calculateClusterCenter(ambientData)
+        acousticCenter = calculateClusterCenter(acousticData)
+        altRockCenter = calculateClusterCenter(altRockData)
+        emoCenter = calculateClusterCenter(emoData)
+        indianCenter = calculateClusterCenter(indianData)
+        KPopCenter = calculateClusterCenter(KPopData)
+        print("Calculated cluster centers (using standard scaler).")
+
+        if debug == 1:
+            print(blackMetalCenter)
+            print(gospelCenter)
+            print(ambientCenter)
+            print(acousticCenter)
+            print(altRockCenter)
+            print(emoCenter)
+            print(indianCenter)
+            print(KPopCenter)
+
+        #newData = blackMetalCenter.to_numpy()
+        newData = np.stack((blackMetalCenter.to_numpy(), 
+                            gospelCenter.to_numpy(),
+                            ambientCenter.to_numpy(),
+                            acousticCenter.to_numpy(),
+                            altRockCenter.to_numpy(),
+                            emoCenter.to_numpy(),
+                            indianCenter.to_numpy(),
+                            KPopCenter.to_numpy()))
+        print(newData)
+
     print("\nFinished execution of knn.py.")
+
+def calculateClusterCenter(data):
+
+    x = data.drop(columns = ["Unnamed: 0", "artist_name", "track_name", "track_id", "genre"]) #Remove non-features. "Unnamed: 0" is the enumeration column. 
+
+    #Normalize all relevant features using StandardScaler
+    #scaler = StandardScaler()
+    #xNormalized = scaler.fit_transform(x.to_numpy())  #Convert DataFrame to NumPy array
+
+    #Convert the normalized NumPy array back to a DataFrame
+    #xNormalized = pd.DataFrame(xNormalized, columns = x.columns)
+
+    clusterCenter = x.mean()#Normalized.mean()
+    
+    return clusterCenter
 
 def tunedKNNExperiment(data):
     print("\nRunning experiment on tuned KNN Classifier...")
@@ -90,7 +165,7 @@ def tunedKNNExperiment(data):
 
     #Normalize all relevant features using StandardScaler
     scaler = StandardScaler()
-    xNormalized = scaler.fit_transform(x.to_numpy())  # Convert DataFrame to NumPy array
+    xNormalized = scaler.fit_transform(x.to_numpy())  #Convert DataFrame to NumPy array
 
     #Convert the normalized NumPy array back to a DataFrame
     xNormalized = pd.DataFrame(xNormalized, columns = x.columns)
@@ -207,7 +282,7 @@ def tuneWeights(data): #Weighting only changes the training accuracy; overfits u
 
     #Normalize all relevant features using StandardScaler
     scaler = StandardScaler()
-    xNormalized = scaler.fit_transform(x.to_numpy())  # Convert DataFrame to NumPy array
+    xNormalized = scaler.fit_transform(x.to_numpy())  #Convert DataFrame to NumPy array
 
     #Convert the normalized NumPy array back to a DataFrame
     xNormalized = pd.DataFrame(xNormalized, columns = x.columns)
@@ -277,7 +352,7 @@ def tuneDissimilarityMeasure(data):
 
     #Normalize all relevant features using StandardScaler
     scaler = StandardScaler()
-    xNormalized = scaler.fit_transform(x.to_numpy())  # Convert DataFrame to NumPy array
+    xNormalized = scaler.fit_transform(x.to_numpy())  #Convert DataFrame to NumPy array
 
     #Convert the normalized NumPy array back to a DataFrame
     xNormalized = pd.DataFrame(xNormalized, columns = x.columns)
@@ -351,7 +426,7 @@ def tuneNeighbours(data):
 
     #Normalize all relevant features using StandardScaler
     scaler = StandardScaler()
-    xNormalized = scaler.fit_transform(x.to_numpy())  # Convert DataFrame to NumPy array
+    xNormalized = scaler.fit_transform(x.to_numpy())  #Convert DataFrame to NumPy array
 
     #Convert the normalized NumPy array back to a DataFrame
     xNormalized = pd.DataFrame(xNormalized, columns = x.columns)
@@ -427,7 +502,7 @@ def initialExperiment(data):
 
     #Normalize all relevant features using StandardScaler
     scaler = StandardScaler()
-    xNormalized = scaler.fit_transform(x.to_numpy())  # Convert DataFrame to NumPy array
+    xNormalized = scaler.fit_transform(x.to_numpy())  #Convert DataFrame to NumPy array
 
     #Convert the normalized NumPy array back to a DataFrame
     xNormalized = pd.DataFrame(xNormalized, columns = x.columns)
