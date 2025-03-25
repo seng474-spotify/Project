@@ -7,7 +7,8 @@ import kagglehub #pip install kagglehub
 import matplotlib.pyplot as plt #pip install matplotlib
 import numpy as np #pip install numpy
 import pandas as pd #pip install pandas
-from sklearn.model_selection import GridSearchCV, train_test_split #pip install scikit-learn
+from sklearn.cluster import AgglomerativeClustering #pip install scikit-learn
+from sklearn.model_selection import GridSearchCV, train_test_split
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.preprocessing import StandardScaler
 
@@ -99,7 +100,7 @@ def main():
         emoCenter = calculateClusterCenter(emoData)
         indianCenter = calculateClusterCenter(indianData)
         KPopCenter = calculateClusterCenter(KPopData)
-        print("Calculated cluster centers (using standard scaler).")
+        print("Calculated cluster centers.") #(using standard scaler).")
 
         if debug == 1:
             print(blackMetalCenter)
@@ -111,16 +112,37 @@ def main():
             print(indianCenter)
             print(KPopCenter)
 
-        #newData = blackMetalCenter.to_numpy()
-        newData = np.stack((blackMetalCenter.to_numpy(), 
-                            gospelCenter.to_numpy(),
-                            ambientCenter.to_numpy(),
-                            acousticCenter.to_numpy(),
-                            altRockCenter.to_numpy(),
-                            emoCenter.to_numpy(),
-                            indianCenter.to_numpy(),
-                            KPopCenter.to_numpy()))
-        print(newData)
+        #Group 1 kpop/altrock
+        group1Data = pd.concat([KPopData, altRockData])
+        group1Data["genre"] = "group1"
+        #Group 2 - acoustic/emo
+        group2Data = pd.concat([acousticData, emoData])
+        group2Data["genre"] = "group2"
+        #Group 3 - gospel/ambient
+        group3Data = pd.concat([gospelData, ambientData])
+        group3Data["genre"] = "group3"
+        #Group 4 - blackmetal/indian
+        group4Data = pd.concat([blackMetalData, indianData])
+        group4Data["genre"] = "group4"
+        print("Finished pairing genres into most similar groups.") #Done so the problem is binary classification? Could increase accuracy.
+        
+        groupedData = pd.concat([group1Data, group2Data, group3Data, group4Data])
+
+        #newData = np.stack((blackMetalCenter.to_numpy(), 
+        #                    gospelCenter.to_numpy(),
+        #                    ambientCenter.to_numpy(),
+        #                    #acousticCenter.to_numpy(),
+        #                    #altRockCenter.to_numpy(),
+        #                    #emoCenter.to_numpy(),
+        #                    indianCenter.to_numpy()))#,
+        #                    #KPopCenter.to_numpy()))
+
+        #if debug == 1:
+        #    print(newData)
+
+        #clustering1 = AgglomerativeClustering(n_clusters = 3, metric = "euclidean", linkage = "single")
+        #clustering1.fit(newData)
+        #print(clustering1.labels_)
 
     print("\nFinished execution of knn.py.")
 
@@ -135,7 +157,7 @@ def calculateClusterCenter(data):
     #Convert the normalized NumPy array back to a DataFrame
     #xNormalized = pd.DataFrame(xNormalized, columns = x.columns)
 
-    clusterCenter = x.mean()#Normalized.mean()
+    clusterCenter = x.mean() #Normalized.mean()
     
     return clusterCenter
 
