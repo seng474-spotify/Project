@@ -26,7 +26,7 @@ tunedKNNSwitch = 0 #Using tuned hyperparameters
 testSwitch = 1
 
 #Ideal Hyperparameter Values (calculated from experiments)
-idealNeighbors = 40 
+idealNeighbors = 20 #40
 idealWeighting = "uniform"
 idealAlgorithm = "auto"
 idealMetric = "manhattan"
@@ -114,19 +114,145 @@ def main():
 
         #Group 1 kpop/altrock
         group1Data = pd.concat([KPopData, altRockData])
-        group1Data["genre"] = "group1"
+        
+        xGroup1 = group1Data.drop(columns = ["Unnamed: 0", "artist_name", "track_name", "track_id", "genre"])
+        yGroup1 = group1Data["genre"]
+        
+        scaler = StandardScaler()
+        xGroup1Normalized = scaler.fit_transform(xGroup1.to_numpy())  #Convert DataFrame to NumPy array
+
+        #Convert the normalized NumPy array back to a DataFrame
+        xGroup1Normalized = pd.DataFrame(xGroup1Normalized, columns = xGroup1.columns)
+        print(xGroup1Normalized)
+        
+        xGroup1Train, xGroup1Test, yGroup1Train, yGroup1Test = train_test_split(xGroup1Normalized, yGroup1, test_size = 0.2)
+        
+        xGroup1TrainCopy = xGroup1Train.copy()
+        xGroup1TestCopy = xGroup1Test.copy()
+        yGroup1TrainCopy = yGroup1Train.copy()
+        yGroup1TestCopy = yGroup1Test.copy()
+
+        yGroup1TrainCopy[:] = "group1"
+        yGroup1TestCopy[:] = "group1"
+
         #Group 2 - acoustic/emo
         group2Data = pd.concat([acousticData, emoData])
-        group2Data["genre"] = "group2"
+        
+        xGroup2 = group2Data.drop(columns = ["Unnamed: 0", "artist_name", "track_name", "track_id", "genre"])
+        yGroup2 = group2Data["genre"]
+        
+        scaler = StandardScaler()
+        xGroup2Normalized = scaler.fit_transform(xGroup2.to_numpy())  #Convert DataFrame to NumPy array
+
+        #Convert the normalized NumPy array back to a DataFrame
+        xGroup2Normalized = pd.DataFrame(xGroup2Normalized, columns = xGroup2.columns)
+        
+        xGroup2Train, xGroup2Test, yGroup2Train, yGroup2Test = train_test_split(xGroup2Normalized, yGroup2, test_size = 0.2)
+        
+        xGroup2TrainCopy = xGroup2Train.copy()
+        xGroup2TestCopy = xGroup2Test.copy()
+        yGroup2TrainCopy = yGroup2Train.copy()
+        yGroup2TestCopy = yGroup2Test.copy()
+
+        yGroup2TrainCopy[:] = "group2"
+        yGroup2TestCopy[:] = "group2"
+
         #Group 3 - gospel/ambient
-        group3Data = pd.concat([gospelData, ambientData])
-        group3Data["genre"] = "group3"
+        group3Data = pd.concat([gospelData, gospelData])
+        
+        xGroup3 = group3Data.drop(columns = ["Unnamed: 0", "artist_name", "track_name", "track_id", "genre"])
+        yGroup3 = group3Data["genre"]
+        
+        scaler = StandardScaler()
+        xGroup3Normalized = scaler.fit_transform(xGroup3.to_numpy())  #Convert DataFrame to NumPy array
+
+        #Convert the normalized NumPy array back to a DataFrame
+        xGroup3Normalized = pd.DataFrame(xGroup3Normalized, columns = xGroup3.columns)
+        
+        xGroup3Train, xGroup3Test, yGroup3Train, yGroup3Test = train_test_split(xGroup3Normalized, yGroup3, test_size = 0.2)
+        
+        xGroup3TrainCopy = xGroup3Train.copy()
+        xGroup3TestCopy = xGroup3Test.copy()
+        yGroup3TrainCopy = yGroup3Train.copy()
+        yGroup3TestCopy = yGroup3Test.copy()
+
+        yGroup3TrainCopy[:] = "group3"
+        yGroup3TestCopy[:] = "group3"
+
         #Group 4 - blackmetal/indian
         group4Data = pd.concat([blackMetalData, indianData])
-        group4Data["genre"] = "group4"
-        print("Finished pairing genres into most similar groups.") #Done so the problem is binary classification? Could increase accuracy.
         
-        groupedData = pd.concat([group1Data, group2Data, group3Data, group4Data])
+        xGroup4 = group4Data.drop(columns = ["Unnamed: 0", "artist_name", "track_name", "track_id", "genre"])
+        yGroup4 = group4Data["genre"]
+        
+        scaler = StandardScaler()
+        xGroup4Normalized = scaler.fit_transform(xGroup4.to_numpy())  #Convert DataFrame to NumPy array
+
+        #Convert the normalized NumPy array back to a DataFrame
+        xGroup4Normalized = pd.DataFrame(xGroup4Normalized, columns = xGroup4.columns)
+        
+        xGroup4Train, xGroup4Test, yGroup4Train, yGroup4Test = train_test_split(xGroup4Normalized, yGroup4, test_size = 0.2)
+        
+        xGroup4TrainCopy = xGroup4Train.copy()
+        xGroup4TestCopy = xGroup4Test.copy()
+        yGroup4TrainCopy = yGroup4Train.copy()
+        yGroup4TestCopy = yGroup4Test.copy()
+
+        yGroup4TrainCopy[:] = "group4"
+        yGroup4TestCopy[:] = "group4"
+
+        print("Datasets created for each grouping.")
+
+        xTrainCopyCombined = pd.concat([xGroup1TrainCopy, xGroup2TrainCopy, xGroup3TrainCopy, xGroup4TrainCopy])
+        yTrainCopyCombined = pd.concat([yGroup1TrainCopy, yGroup2TrainCopy, yGroup3TrainCopy, yGroup4TrainCopy])
+        
+        xTestCopyCombined = pd.concat([xGroup1TestCopy, xGroup2TestCopy, xGroup3TestCopy, xGroup4TestCopy])
+        yTestCopyCombined = pd.concat([yGroup1TestCopy, yGroup2TestCopy, yGroup3TestCopy, yGroup4TestCopy])
+
+        KNNTopLevelClassifier = trainKNNClassifier(xTrain = xTrainCopyCombined, yTrain = yTrainCopyCombined)
+        print("Trained top-level KNN Classifier (groups).")
+        
+        topLevelPredictions = KNNTopLevelClassifier.predict(xTestCopyCombined)
+        group1Indices = np.where(topLevelPredictions == "group1")[0].tolist()
+        group2Indices = np.where(topLevelPredictions == "group2")[0].tolist()
+        group3Indices = np.where(topLevelPredictions == "group3")[0].tolist()
+        group4Indices = np.where(topLevelPredictions == "group4")[0].tolist()
+
+        print("Finished classification into groups.")
+
+        KNNGroup1Classifier = trainKNNClassifier(xTrain = xGroup1Train, yTrain = yGroup1Train)
+        print("Trained bottom-level KNN Classifier for group 1.")
+        print("Training accuracy: " + str(KNNGroup1Classifier.score(xGroup1Train, yGroup1Train) * 100) + "%.")
+        print("Testing Accuracy: " + str(KNNGroup1Classifier.score(xTestCopyCombined.iloc[group1Indices], yTestCopyCombined.iloc[group1Indices]) * 100) + "%.")
+        
+        KNNGroup2Classifier = trainKNNClassifier(xTrain = xGroup2Train, yTrain = yGroup2Train)
+        print("Trained bottom-level KNN Classifier for group 2.")
+        
+        KNNGroup3Classifier = trainKNNClassifier(xTrain = xGroup3Train, yTrain = yGroup3Train)
+        print("Trained bottom-level KNN Classifier for group 3.")
+        
+        KNNGroup4Classifier = trainKNNClassifier(xTrain = xGroup3Train, yTrain = yGroup3Train)
+        print("Trained bottom-level KNN Classifier for group 4.")
+
+        # groupedData = pd.concat([group1Data, group2Data, group3Data, group4Data])
+
+        # x = data.drop(columns = ["Unnamed: 0", "artist_name", "track_name", "track_id", "genre"]) #Remove non-features. "Unnamed: 0" is the enumeration column. 
+        # y = data["genre"]
+
+        # scaler = StandardScaler()
+        # xNormalized = scaler.fit_transform(x.to_numpy())  #Convert DataFrame to NumPy array
+
+        # #Convert the normalized NumPy array back to a DataFrame
+        # xNormalized = pd.DataFrame(xNormalized, columns = x.columns)
+
+        # xTrain, xTest, yTrain, yTest = train_test_split(xNormalized, y, test_size = 0.2) #Tested on random_state = 8
+        # print("Training and testing sets created from dataset.")
+
+        # KNNClassifier = trainKNNClassifier(xTrain = xTrain, yTrain = yTrain)
+        # print("Trained KNN Classifier.")
+
+        # print("Training accuracy: " + str(KNNClassifier.score(xTrain, yTrain) * 100) + "%.")
+        # print("Testing accuracy: " + str(KNNClassifier.score(xTest, yTest) * 100) + "%.")
 
         #newData = np.stack((blackMetalCenter.to_numpy(), 
         #                    gospelCenter.to_numpy(),
