@@ -124,7 +124,6 @@ def main():
 
         #Convert the normalized NumPy array back to a DataFrame
         xGroup1Normalized = pd.DataFrame(xGroup1Normalized, columns = xGroup1.columns)
-        print(xGroup1Normalized)
         
         xGroup1Train, xGroup1Test, yGroup1Train, yGroup1Test = train_test_split(xGroup1Normalized, yGroup1, test_size = 0.2)
         
@@ -250,7 +249,7 @@ def main():
         finalPredictions = np.concatenate((group1DataPredictions, group2DataPredictions, group3DataPredictions, group4DataPredictions))
         finalPredictions = pd.DataFrame(finalPredictions)
         orderedLabels = pd.concat([yGroup1Data, yGroup2Data, yGroup3Data, yGroup4Data])
-        print("Final testing score: " + str(accuracy_score(finalPredictions, orderedLabels)))
+        print("Final testing score: " + str(accuracy_score(finalPredictions, orderedLabels) * 100) + "%.")
 
     print("\nFinished execution of knn.py.")
 
