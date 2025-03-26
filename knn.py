@@ -8,6 +8,7 @@ import matplotlib.pyplot as plt #pip install matplotlib
 import numpy as np #pip install numpy
 import pandas as pd #pip install pandas
 from sklearn.cluster import AgglomerativeClustering #pip install scikit-learn
+from sklearn.metrics import accuracy_score
 from sklearn.model_selection import GridSearchCV, train_test_split
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.preprocessing import StandardScaler
@@ -26,7 +27,7 @@ tunedKNNSwitch = 0 #Using tuned hyperparameters
 testSwitch = 1
 
 #Ideal Hyperparameter Values (calculated from experiments)
-idealNeighbors = 20 #40
+idealNeighbors = 40 
 idealWeighting = "uniform"
 idealAlgorithm = "auto"
 idealMetric = "manhattan"
@@ -203,6 +204,8 @@ def main():
 
         print("Datasets created for each grouping.")
 
+        yTestCombined = pd.concat([yGroup1Test, yGroup2Test, yGroup3Test, yGroup4Test])
+
         xTrainCopyCombined = pd.concat([xGroup1TrainCopy, xGroup2TrainCopy, xGroup3TrainCopy, xGroup4TrainCopy])
         yTrainCopyCombined = pd.concat([yGroup1TrainCopy, yGroup2TrainCopy, yGroup3TrainCopy, yGroup4TrainCopy])
         
@@ -222,53 +225,32 @@ def main():
 
         KNNGroup1Classifier = trainKNNClassifier(xTrain = xGroup1Train, yTrain = yGroup1Train)
         print("Trained bottom-level KNN Classifier for group 1.")
-        print("Training accuracy: " + str(KNNGroup1Classifier.score(xGroup1Train, yGroup1Train) * 100) + "%.")
-        print("Testing Accuracy: " + str(KNNGroup1Classifier.score(xTestCopyCombined.iloc[group1Indices], yTestCopyCombined.iloc[group1Indices]) * 100) + "%.")
+        xGroup1Data = xTestCopyCombined.iloc[group1Indices]
+        yGroup1Data = yTestCombined.iloc[group1Indices]
+        group1DataPredictions = KNNGroup1Classifier.predict(xGroup1Data)
         
         KNNGroup2Classifier = trainKNNClassifier(xTrain = xGroup2Train, yTrain = yGroup2Train)
         print("Trained bottom-level KNN Classifier for group 2.")
-        
+        xGroup2Data = xTestCopyCombined.iloc[group2Indices]
+        yGroup2Data = yTestCombined.iloc[group2Indices]
+        group2DataPredictions = KNNGroup2Classifier.predict(xGroup2Data)        
+
         KNNGroup3Classifier = trainKNNClassifier(xTrain = xGroup3Train, yTrain = yGroup3Train)
         print("Trained bottom-level KNN Classifier for group 3.")
-        
+        xGroup3Data = xTestCopyCombined.iloc[group3Indices]
+        yGroup3Data = yTestCombined.iloc[group3Indices]
+        group3DataPredictions = KNNGroup3Classifier.predict(xGroup3Data)        
+
         KNNGroup4Classifier = trainKNNClassifier(xTrain = xGroup3Train, yTrain = yGroup3Train)
         print("Trained bottom-level KNN Classifier for group 4.")
+        xGroup4Data = xTestCopyCombined.iloc[group4Indices]
+        yGroup4Data = yTestCombined.iloc[group4Indices]
+        group4DataPredictions = KNNGroup1Classifier.predict(xGroup4Data)
 
-        # groupedData = pd.concat([group1Data, group2Data, group3Data, group4Data])
-
-        # x = data.drop(columns = ["Unnamed: 0", "artist_name", "track_name", "track_id", "genre"]) #Remove non-features. "Unnamed: 0" is the enumeration column. 
-        # y = data["genre"]
-
-        # scaler = StandardScaler()
-        # xNormalized = scaler.fit_transform(x.to_numpy())  #Convert DataFrame to NumPy array
-
-        # #Convert the normalized NumPy array back to a DataFrame
-        # xNormalized = pd.DataFrame(xNormalized, columns = x.columns)
-
-        # xTrain, xTest, yTrain, yTest = train_test_split(xNormalized, y, test_size = 0.2) #Tested on random_state = 8
-        # print("Training and testing sets created from dataset.")
-
-        # KNNClassifier = trainKNNClassifier(xTrain = xTrain, yTrain = yTrain)
-        # print("Trained KNN Classifier.")
-
-        # print("Training accuracy: " + str(KNNClassifier.score(xTrain, yTrain) * 100) + "%.")
-        # print("Testing accuracy: " + str(KNNClassifier.score(xTest, yTest) * 100) + "%.")
-
-        #newData = np.stack((blackMetalCenter.to_numpy(), 
-        #                    gospelCenter.to_numpy(),
-        #                    ambientCenter.to_numpy(),
-        #                    #acousticCenter.to_numpy(),
-        #                    #altRockCenter.to_numpy(),
-        #                    #emoCenter.to_numpy(),
-        #                    indianCenter.to_numpy()))#,
-        #                    #KPopCenter.to_numpy()))
-
-        #if debug == 1:
-        #    print(newData)
-
-        #clustering1 = AgglomerativeClustering(n_clusters = 3, metric = "euclidean", linkage = "single")
-        #clustering1.fit(newData)
-        #print(clustering1.labels_)
+        finalPredictions = np.concatenate((group1DataPredictions, group2DataPredictions, group3DataPredictions, group4DataPredictions))
+        finalPredictions = pd.DataFrame(finalPredictions)
+        orderedLabels = pd.concat([yGroup1Data, yGroup2Data, yGroup3Data, yGroup4Data])
+        print("Final testing score: " + str(accuracy_score(finalPredictions, orderedLabels)))
 
     print("\nFinished execution of knn.py.")
 
@@ -276,14 +258,7 @@ def calculateClusterCenter(data):
 
     x = data.drop(columns = ["Unnamed: 0", "artist_name", "track_name", "track_id", "genre"]) #Remove non-features. "Unnamed: 0" is the enumeration column. 
 
-    #Normalize all relevant features using StandardScaler
-    #scaler = StandardScaler()
-    #xNormalized = scaler.fit_transform(x.to_numpy())  #Convert DataFrame to NumPy array
-
-    #Convert the normalized NumPy array back to a DataFrame
-    #xNormalized = pd.DataFrame(xNormalized, columns = x.columns)
-
-    clusterCenter = x.mean() #Normalized.mean()
+    clusterCenter = x.mean()
     
     return clusterCenter
 
