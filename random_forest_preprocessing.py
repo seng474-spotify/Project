@@ -35,7 +35,7 @@ def split_dataset(X: np.ndarray, y: np.ndarray, training_set_size: float) -> tup
     
     return train_test_split(X, y, train_size=training_set_size)
 
-def select_most_dissimilar_genres(songs: pd.DataFrame, n=8):
+def select_most_dissimilar_genres(songs: pd.DataFrame, n=12):
     """
     Selects the n most dissimilar genres based on the centroids of their feature vectors.
     
@@ -104,14 +104,14 @@ def normalize(X: np.ndarray) -> np.ndarray:
     return X_normalized
 
 
-def preprocess_data(filepath: str) -> tuple:
+def preprocess_data(filepath: str, num_genres) -> tuple:
     '''
     Returns preproccessed data given file handle.
     '''
-    songs = load_dataset("spotify_data.csv")
+    songs = load_dataset(filepath)
     songs = drop_features(songs)
     # Pass the DataFrame to the genre selection function.
-    dissimilar_genres = select_most_dissimilar_genres(songs, 12) # 12 = number of genres
+    dissimilar_genres = select_most_dissimilar_genres(songs, num_genres) # 12 = number of genres
     print(dissimilar_genres)
     X, y = format_dataset(songs)
     X, y = filter_dataset_by_genre(X, y, dissimilar_genres)

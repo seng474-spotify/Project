@@ -137,23 +137,26 @@ def random_forest_experiment() -> None:
     }
 
     # Define the random forest
-    random_forest_model: ensemble.RandomForestClassifier = ensemble.RandomForestClassifier()
+    # random_forest_model: ensemble.RandomForestClassifier = ensemble.RandomForestClassifier()
 
     # Set up GridSearchCV
-    grid_search = GridSearchCV(estimator=random_forest_model, param_grid=param_grid, cv=5, n_jobs=-1, verbose=2)
+    # grid_search = GridSearchCV(estimator=random_forest_model, param_grid=param_grid, cv=5, n_jobs=-1, verbose=2)
 
     # Fit the grid search
-    grid_search.fit(X_train, Y_train)
+    # grid_search.fit(X_train, Y_train)
 
     # Get the best parameters and score
-    print("Best Parameters:", grid_search.best_params_)
-    print("Best Cross-validation Score:", grid_search.best_score_)
+    # print("Best Parameters:", grid_search.best_params_)
+    # print("Best Cross-validation Score:", grid_search.best_score_)
 
     # Best Parameters: Best Parameters: {'max_depth': None, 'max_features': 'sqrt', 'min_samples_leaf': 1, 'min_samples_split': 2, 'n_estimators': 300}
     # Test Error: 13.190059665179865%
 
     # Use the best model from grid search
-    best_model = grid_search.best_estimator_
+    # best_model = grid_search.best_estimator_
+
+    best_model = ensemble.RandomForestClassifier(max_depth=None, max_features='sqrt', min_samples_leaf=1, min_samples_split=2, n_estimators=300)
+    best_model.fit(X_train, Y_train)
 
     # Calculate errors using the best model
     training_error, test_error = calculate_errors(best_model, X_train, Y_train, X_test, Y_test)
@@ -167,16 +170,19 @@ def random_forest_experiment() -> None:
 
 def num_genres_experiment() -> None:
 
-    genres_list = [2, 3, 4, 5, 6, 7, 8, 9, 10]
+    genres_list = [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20]
     training_errors = []
     test_errors = []
     
     for num_genres in genres_list:
         print(f"Testing {num_genres} genres")
         # Get the data given the correct number of features
-        X_train, Y_train, X_test, Y_test = preprocessing.preprocess_data('spotify_data.csv', 50000, num_genres) # Defaults to a test set size of 20%, and a training set of 80%
+        X_train, X_test, Y_train, Y_test = random_forest_preprocessing.preprocess_data('spotify_data.csv', num_genres)
         # Create a model given the optimal tuning found in random_forest_experiment().
-        model = ensemble.RandomForestClassifier(max_depth=20, max_features='sqrt', min_samples_leaf=1, min_samples_split=2, n_estimators=200)
+
+        # MODIFY THE MODEL TO TEST HERE!!!!!!!
+        model = ensemble.RandomForestClassifier(max_depth=None, max_features='sqrt', min_samples_leaf=1, min_samples_split=2, n_estimators=300)
+
         model.fit(X_train, Y_train)
         
         # Calculate Errors

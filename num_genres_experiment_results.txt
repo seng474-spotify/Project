@@ -1,0 +1,60 @@
+Testing 2 genres
+['dubstep', 'sad']
+Testing 3 genres
+['dubstep', 'sad', 'detroit-techno']
+Testing 4 genres
+['dubstep', 'sad', 'detroit-techno', 'grindcore']
+Testing 5 genres
+['dubstep', 'sad', 'detroit-techno', 'grindcore', 'salsa']
+Testing 6 genres
+['dubstep', 'sad', 'detroit-techno', 'grindcore', 'salsa', 'hardstyle']
+Testing 7 genres
+['dubstep', 'sad', 'detroit-techno', 'grindcore', 'salsa', 'hardstyle', 'indian']
+Testing 8 genres
+['dubstep', 'sad', 'detroit-techno', 'grindcore', 'salsa', 'hardstyle', 'indian', 'romance']
+Testing 9 genres
+['dubstep', 'sad', 'detroit-techno', 'grindcore', 'salsa', 'hardstyle', 'indian', 'romance', 'power-pop']
+Testing 10 genres
+['dubstep', 'sad', 'detroit-techno', 'grindcore', 'salsa', 'hardstyle', 'indian', 'romance', 'power-pop', 'songwriter']
+Testing 11 genres
+['dubstep', 'sad', 'detroit-techno', 'grindcore', 'salsa', 'hardstyle', 'indian', 'romance', 'power-pop', 'songwriter', 'breakbeat']
+Testing 12 genres
+['dubstep', 'sad', 'detroit-techno', 'grindcore', 'salsa', 'hardstyle', 'indian', 'romance', 'power-pop', 'songwriter', 'breakbeat', 'trance']
+Testing 13 genres
+['dubstep', 'sad', 'detroit-techno', 'grindcore', 'salsa', 'hardstyle', 'indian', 'romance', 'power-pop', 'songwriter', 'breakbeat', 'trance', 'black-metal']
+Testing 14 genres
+['dubstep', 'sad', 'detroit-techno', 'grindcore', 'salsa', 'hardstyle', 'indian', 'romance', 'power-pop', 'songwriter', 'breakbeat', 'trance', 'black-metal', 'cantopop']
+Testing 15 genres
+['dubstep', 'sad', 'detroit-techno', 'grindcore', 'salsa', 'hardstyle', 'indian', 'romance', 'power-pop', 'songwriter', 'breakbeat', 'trance', 'black-metal', 'cantopop', 'dance']
+Testing 16 genres
+['dubstep', 'sad', 'detroit-techno', 'grindcore', 'salsa', 'hardstyle', 'indian', 'romance', 'power-pop', 'songwriter', 'breakbeat', 'trance', 'black-metal', 'cantopop', 'dance', 'samba']
+Testing 17 genres
+['dubstep', 'sad', 'detroit-techno', 'grindcore', 'salsa', 'hardstyle', 'indian', 'romance', 'power-pop', 'songwriter', 'breakbeat', 'trance', 'black-metal', 'cantopop', 'dance', 'samba', 'heavy-metal']
+Testing 18 genres
+['dubstep', 'sad', 'detroit-techno', 'grindcore', 'salsa', 'hardstyle', 'indian', 'romance', 'power-pop', 'songwriter', 'breakbeat', 'trance', 'black-metal', 'cantopop', 'dance', 'samba', 'heavy-metal', 'club']
+Testing 19 genres
+['dubstep', 'sad', 'detroit-techno', 'grindcore', 'salsa', 'hardstyle', 'indian', 'romance', 'power-pop', 'songwriter', 'breakbeat', 'trance', 'black-metal', 'cantopop', 'dance', 'samba', 'heavy-metal', 'club', 'psych-rock']
+Testing 20 genres
+['dubstep', 'sad', 'detroit-techno', 'grindcore', 'salsa', 'hardstyle', 'indian', 'romance', 'power-pop', 'songwriter', 'breakbeat', 'trance', 'black-metal', 'cantopop', 'dance', 'samba', 'heavy-metal', 'club', 'psych-rock', 'party']
+
+Number of Genres    Training Error      Test Error          
+------------------------------------------------------------
+2                   0.0000              0.0152              
+3                   0.0000              0.0562              
+4                   0.0000              0.0480              
+5                   0.0000              0.0542              
+6                   0.0000              0.0676              
+7                   0.0000              0.1204              
+8                   0.0000              0.1347              
+9                   0.0000              0.1568              
+10                  0.0000              0.1586              
+11                  0.0000              0.1775              
+12                  0.0000              0.1815              
+13                  0.0000              0.1986              
+14                  0.0000              0.2157              
+15                  0.0000              0.2076              
+16                  0.0000              0.2426              
+17                  0.0000              0.2598              
+18                  0.0000              0.2757              
+19                  0.0000              0.3130              
+20                  0.0000              0.3103    
