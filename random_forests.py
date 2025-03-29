@@ -15,6 +15,11 @@ import preprocessing
 import random_forest_preprocessing
 from error import calculate_errors
 from graph import plot_errors
+import pandas as pd
+from sklearn.metrics import confusion_matrix
+import seaborn as sns
+import matplotlib.pyplot as plt
+import os
 
 def parse_cl_args() -> str:
     '''
@@ -171,6 +176,7 @@ def random_forest_experiment() -> None:
 def num_genres_experiment() -> None:
 
     genres_list = [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20]
+
     training_errors = []
     test_errors = []
     
@@ -189,6 +195,14 @@ def num_genres_experiment() -> None:
         training_error, test_error = calculate_errors(model, X_train, Y_train, X_test, Y_test)
         training_errors.append(training_error)
         test_errors.append(test_error)
+
+
+        Y_pred = model.predict(X_test)
+
+        df = pd.DataFrame({'Actual Genre': Y_test, 'Predicted Genre': Y_pred})
+        output_filename = f'misclassifications/genre_predictions_{num_genres}_genres.csv'
+        df.to_csv(output_filename, index=False)
+        
     
     plot_errors(genres_list, training_errors, test_errors, "Effect of Number of Number of Genres used on Error for Random Forests", "Number of Genres")
     
@@ -197,8 +211,34 @@ def num_genres_experiment() -> None:
     print("-" * 60)  # Separator line
     for genre, train_err, test_err in zip(genres_list, training_errors, test_errors):
         print(f"{genre:<20}{train_err:<20.4f}{test_err:<20.4f}")
+
+    plot_confusion_matrix(genres_list)
     
     return
+
+
+
+
+def plot_confusion_matrix(genres_list):
+    folder = "confusion_matricies"
+    os.makedirs(folder, exist_ok=True)
+
+    for i in genres_list:
+        df = pd.read_csv(f'misclassifications/genre_predictions_{i}_genres.csv')
+
+        genres = sorted(df['Actual Genre'].unique())
+        cm = confusion_matrix(df['Actual Genre'], df['Predicted Genre'], labels=genres)
+
+        plt.figure(figsize=(10, 8))
+        sns.heatmap(cm, annot=True, fmt='d', xticklabels=genres, yticklabels=genres, cmap="Blues")
+        plt.xlabel('Predicted')
+        plt.ylabel('Actual')
+        plt.title(f'Confusion Matrix with {i} genres')
+
+        save_path = os.path.join(folder, f'confusion_matrix_{i}_genres.png')
+        plt.savefig(save_path, bbox_inches='tight')
+        plt.close()
+
 
 
 def main():
